@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 
 int yylex();
 int yyparse();
@@ -24,13 +25,28 @@ int main()
 
 %%
 start:
-    dollars TOKOP percentage;
+    dollars TOKOP percentage
+    {
+        double dollars = $1;
+        double percentage = ($3)/(100.0);
+        double total = dollars + dollars*percentage;
+        printf("debug: dollars = %f\n", dollars);
+        printf("debug: percent = %f\n", percentage);
+
+        printf("%.2f", total);
+    }
 
 dollars:
-    TOKDOLLAR NUMBER;
+    TOKDOLLAR NUMBER
+    {
+        $$ = (double)$2;
+    }
 
 percentage:
-    NUMBER TOKPERCENT;
+    NUMBER TOKPERCENT
+    {
+        $$ = (double)$1;
+    }
 
 %%
 
