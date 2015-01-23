@@ -22,17 +22,26 @@ int main()
 }
 %}
 
-%token NUMBER TOKOP TOKDOLLAR TOKPERCENT;
+%token NUMBER TOKDOLLAR TOKPERCENT OP_PLUS OP_MINUS;
 
 %%
 start:
-    dollars TOKOP percentage
+    dollars OP_PLUS percentage
     {
         double dollars = $1;
         double percentage = ($3)/(100.0);
         double total = dollars + dollars*percentage;
-        printf("%.2f", total);
+        printf("$%.2f", total);
     }
+    |
+    dollars OP_MINUS percentage
+    {
+        double dollars = $1;
+        double percentage = ($3)/(100.0);
+        double total = dollars - dollars*percentage;
+        printf("$%.2f", total);
+    };
+
 
 dollars:
     TOKDOLLAR NUMBER
