@@ -22,24 +22,43 @@ int main()
 }
 %}
 
-%token NUMBER TOKDOLLAR TOKPERCENT OP_PLUS OP_MINUS;
+%token NUMBER TOKDOLLAR TOKPERCENT LPAREN RPAREN OP_PLUS OP_MINUS;
 
 %%
 start:
+    binary_expression
+    {
+        double dollars = $1;
+        printf("$%.2f", dollars);
+    };
+
+binary_expression:
     dollars OP_PLUS percentage
     {
         double dollars = $1;
         double percentage = ($3)/(100.0);
-        double total = dollars + dollars*percentage;
-        printf("$%.2f", total);
+        $$ = dollars + dollars*percentage;
     }
     |
     dollars OP_MINUS percentage
     {
         double dollars = $1;
         double percentage = ($3)/(100.0);
-        double total = dollars - dollars*percentage;
-        printf("$%.2f", total);
+        $$ = dollars - dollars*percentage;
+    }
+    |
+    LPAREN binary_expression RPAREN OP_PLUS percentage
+    {
+        double dollars = $2;
+        double percentage = ($3)/(100.0);
+        $$ = dollars + dollars*percentage;
+    }
+    |
+    LPAREN binary_expression RPAREN OP_MINUS percentage
+    {
+        double dollars = $2;
+        double percentage = ($3)/(100.0);
+        $$ = dollars - dollars*percentage;
     };
 
 
@@ -47,13 +66,13 @@ dollars:
     TOKDOLLAR NUMBER
     {
         $$ = $2;
-    }
+    };
 
 percentage:
     NUMBER TOKPERCENT
     {
         $$ = $1;
-    }
+    };
 
 %%
 
